@@ -8,6 +8,15 @@ POINT_DTYPE = [
 ]
 
 
+def new(lat, lon, id=0, elev=0):
+    return {
+        'id': id,
+        'lat': lat,
+        'lon': lon,
+        'elev': elev,
+    }
+
+
 def generate_lex_order(N, elev_func, testing=False):
     if testing:
         return generate_test_points()
@@ -33,6 +42,10 @@ def generate_test_points():
 
 
 def det(a, b, c):
+    """
+    if det > 0, anticlockwise order
+    if det < 0, clockwise order
+    """
     array = np.array([
         [a['lon'], a['lat'], 1],
         [b['lon'], b['lat'], 1],
@@ -44,3 +57,28 @@ def det(a, b, c):
 
 def find_left_and_right(a, b):
     return a, b if a['id'] < b['id'] else b, a
+
+
+def det_circle(a, b, c, d):
+    """
+    d : the new node we added to triangulation
+    if det = 0, the points lie on a common circle
+    if det > 0, d lies inside the common circle of a, b, c
+    if det < 0, d lies outside the common circle of a, b, c
+    """
+    if det(a, b, c) < 0:
+        array = np.array([
+            [a['lon'], a['lat'], a['lon']**2 + a['lat']**2, 1],
+            [b['lon'], b['lat'], b['lon']**2 + b['lat']**2, 1],
+            [c['lon'], c['lat'], c['lon']**2 + c['lat']**2, 1],
+            [d['lon'], d['lat'], d['lon']**2 + d['lat']**2, 1]
+        ])
+    else:
+        array = np.array([
+            [a['lon'], a['lat'], a['lon']**2 + a['lat']**2, 1],
+            [c['lon'], c['lat'], c['lon']**2 + c['lat']**2, 1],
+            [b['lon'], b['lat'], b['lon']**2 + b['lat']**2, 1],
+            [d['lon'], d['lat'], d['lon']**2 + d['lat']**2, 1]
+        ])
+
+    return np.linalg.det(array)
