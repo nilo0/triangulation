@@ -28,8 +28,8 @@ def generate_test_points():
     points = np.zeros(len(vtx), dtype=POINT_DTYPE)
 
     for v, point in zip(vtx, points):
-        point['lat'] = v[0]
-        point['lon'] = v[1]
+        point['lon'] = v[0]
+        point['lat'] = v[1]
         point['elev'] = 0
 
     sort_order = np.argsort(points, order=('lat', 'lon'))
@@ -56,7 +56,7 @@ def det(a, b, c):
 
 
 def find_left_and_right(a, b):
-    return a, b if a['id'] < b['id'] else b, a
+    return (a, b) if a['id'] < b['id'] else (b, a)
 
 
 def det_circle(a, b, c, d):

@@ -1,13 +1,12 @@
 from . import points as points_helper
 
 
-def new(id, vtx_ids, parent_ids=[], child_ids=[], nb_ids=[]):
+def new(id, vtx_ids, parent_ids, child_ids):
     return {
         'id': id,
         'vtx_ids': vtx_ids,  # vertices ids
         'parent_ids': parent_ids,
         'child_ids': child_ids,
-        'nb_ids': nb_ids,  # neighbour ids
     }
 
 
@@ -46,9 +45,9 @@ def is_inside(T, point, points):
         else:
             return False
     else:
-        a = points[T['points'][0]]
-        b = points[T['points'][1]]
-        c = points[T['points'][2]]
+        a = points[T['vtx_ids'][0]]
+        b = points[T['vtx_ids'][1]]
+        c = points[T['vtx_ids'][2]]
 
         t0 = points_helper.det(a, b, c)
         t1 = points_helper.det(a, b, point)

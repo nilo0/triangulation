@@ -1,6 +1,8 @@
 from ..main import Triangulation
 
 
-def test_main():
+def test_Triangulation():
     t = Triangulation(7, testing=True)
-    t.Delaunay()
+    leaves = t.Delaunay()
+
+    print(leaves)
