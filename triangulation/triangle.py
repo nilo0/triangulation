@@ -10,7 +10,7 @@ class Triangle:
         self.P_2 = P_2
         self.P = points
 
-        self.list ={
+        self.list = {
             0: triangles_helper.new(0, [points[-1]['id'], P_1['id'], P_2['id']], [], [])
         }
 
@@ -145,10 +145,10 @@ class Triangle:
         else:
             point_nb = self.P[point_nb_id]
 
-        if all(edge_ids) > 0 and point['id'] > 0 and point_nb['id'] < 0:
+        if all(edge_ids) >= 0 and point['id'] >= 0 and point_nb['id'] < 0:
             return
 
-        if point['id'] > 0 and any(edge_ids) < 0 and point_nb['id'] < min(edge_ids):
+        if point['id'] >= 0 and any(edge_ids) < 0 and point_nb['id'] < min(edge_ids):
             return
 
         edge = []
@@ -167,16 +167,12 @@ class Triangle:
             self.legalize(point, new_edge_1, T1)
             self.legalize(point, new_edge_2, T2)
 
-        elif all(edge_ids) > 0 and point['id'] > 0 and point_nb['id'] > 0:
+        elif all(edge_ids) >= 0 and point['id'] >= 0 and point_nb['id'] >= 0:
             e1 = self.P[edge_ids[0]]
             e2 = self.P[edge_ids[1]]
 
-            if points_helper.det(point, e1, e2) < 0:  # clockwise
-                in_circle = points_helper.det_circle(
-                    point, e1, e2, point_nb)
-            else:
-                in_circle = points_helper.det_circle(
-                    point, e2, e1, point_nb)
+            in_circle = points_helper.det_circle(
+                point, e1, e2, point_nb)
 
             if in_circle > 0:
                 new_edge_1, new_edge_2, T1, T2 = self.flip(
@@ -185,7 +181,7 @@ class Triangle:
                 self.legalize(point, new_edge_1, T1)
                 self.legalize(point, new_edge_2, T2)
 
-        elif point['id'] > 0 and any(edge_ids) < 0:
+        elif point['id'] >= 0 and any(edge_ids) < 0:
             if point_nb['id'] > min(edge_ids):
                 new_edge_1, new_edge_2, T1, T2 = self.flip(
                     T, T_nb, point, point_nb, edge)
