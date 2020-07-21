@@ -43,8 +43,8 @@ def generate_test_points():
 
 def det(a, b, c):
     """
-    if det > 0, anticlockwise order
-    if det < 0, clockwise order
+    if det < 0, counter-clockwise order
+    if det > 0, clockwise order
     """
     array = np.array([
         [a['lon'], a['lat'], 1],
@@ -66,7 +66,7 @@ def det_circle(a, b, c, d):
     if det > 0, d lies inside the common circle of a, b, c
     if det < 0, d lies outside the common circle of a, b, c
     """
-    if det(a, b, c) < 0:
+    if det(a, b, c) > 0:
         array = np.array([
             [a['lon'], a['lat'], a['lon']**2 + a['lat']**2, 1],
             [b['lon'], b['lat'], b['lon']**2 + b['lat']**2, 1],

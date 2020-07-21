@@ -13,6 +13,13 @@ def new(id, vtx_ids, parent_ids, child_ids):
 def is_inside(T, point, points):
     vtx_ids = T['vtx_ids']
 
+    # Handle P_1 and P_2
+    if point['id'] == -1 or point['id'] == -2:
+        if point['id'] in T['vtx_ids']:
+            return True
+        else:
+            return False
+
     if -1 in vtx_ids and -2 not in vtx_ids:
         id1, id2 = list(set(vtx_ids) - {-1})
 
