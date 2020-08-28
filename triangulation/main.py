@@ -24,7 +24,7 @@ class Triangulation:
         self.P_1 = points_helper.new(0, 0, id=-1)
         self.P_2 = points_helper.new(0, 0, id=-2)
         self.P = points_helper.generate_lex_order(
-            number_of_points, srtm3.elevation, testing=testing)
+            number_of_points, area, srtm3.elevation, testing=testing)
 
         # Triangles (and adding the root triangle)
         self.T = Triangle(self.P_1, self.P_2, self.P)

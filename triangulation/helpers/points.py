@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 POINT_DTYPE = [
     ('id', np.int),
@@ -17,9 +18,53 @@ def new(lat, lon, id=0, elev=0):
     }
 
 
-def generate_lex_order(N, elev_func, testing=False):
+def generate_lex_order(N, area, elev_func, testing=False):
     if testing:
         return generate_test_points()
+
+    random.seed(19900716)
+
+    bl_lat = area[0]
+    bl_lon = area[1]
+    tr_lat = area[2]
+    tr_lon = area[3]
+
+    points = np.zeros(N, dtype=POINT_DTYPE)
+
+    def check_if_on_circle(ip, p):
+        if ip < 3:
+            return False
+
+        on_circle = False
+        for i in range(ip):
+            if on_circle:
+                break
+            for j in range(i + 1, ip):
+                if on_circle:
+                    break
+                for k in range(j + 1, ip):
+                    if det_circle(points[i], points[j], points[k], p) == 0:
+                        on_circle = True
+
+        return on_circle
+
+
+    for ipoint in range(N):
+        on_circle = True
+        while on_circle:
+            new_lat = random.uniform(bl_lat, tr_lat)
+            new_lon = random.uniform(bl_lon, tr_lon)
+
+            new_point = new(new_lat, new_lon, id=ipoint)
+
+            on_circle = check_if_on_circle(ipoint, new_point)
+
+        points[ipoint]['id'] = ipoint
+        points[ipoint]['lat'] = new_point['lat']
+        points[ipoint]['lon'] = new_point['lon']
+        points[ipoint]['elev'] = elev_func(new_lon, new_lat)
+
+    return points
 
 
 def generate_test_points():
