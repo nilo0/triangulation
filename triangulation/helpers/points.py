@@ -1,5 +1,5 @@
 import numpy as np
-import random
+from random import random, seed
 
 POINT_DTYPE = [
     ('id', np.int),
@@ -18,57 +18,53 @@ def new(lat, lon, id=0, elev=0):
     }
 
 
-def generate_lex_order(N, area, elev_func, testing=False):
+def _on_a_circle(points, lon, lat):
+    if len(points) < 3:
+        return False
+
+    for i, a in enumerate(points):
+        for j, b in enumerate(points[i+1:]):
+            for c in points[i+j+1+1:]:
+                d = {'lat': lat, 'lon': lon}
+                if det_circle(a, b, c, d) == 0:
+                    return True
+
+    return False
+
+
+def generate_lex_order(N, elev_func, bl, tr, testing=False):
     if testing:
         return generate_test_points()
 
-    random.seed(19900716)
-
-    bl_lat = area[0]
-    bl_lon = area[1]
-    tr_lat = area[2]
-    tr_lon = area[3]
-
     points = np.zeros(N, dtype=POINT_DTYPE)
 
-    def check_if_on_circle(ip, p):
-        if ip < 3:
-            return False
+    seed(123456789)
 
-        on_circle = False
-        for i in range(ip):
-            if on_circle:
+    for i, point in enumerate(points):
+        while(True):
+            lat = bl['lat'] + random() * (tr['lat'] - bl['lat'])
+            lon = bl['lon'] + random() * (tr['lon'] - bl['lon'])
+            if not _on_a_circle(points[:i], lat, lon):
+                elev = elev_func(lon, lat)
+                point['lat'] = lat
+                point['lon'] = lon
+                point['elev'] = elev
                 break
-            for j in range(i + 1, ip):
-                if on_circle:
-                    break
-                for k in range(j + 1, ip):
-                    if det_circle(points[i], points[j], points[k], p) == 0:
-                        on_circle = True
 
-        return on_circle
+        if i % len(point) / 10 == 0:
+            print('Found ' + str(i) + ' points...')
 
+    sort_order = np.argsort(points, order=('lat', 'lon'))
+    np.take(points, sort_order, out=points)
 
-    for ipoint in range(N):
-        on_circle = True
-        while on_circle:
-            new_lat = random.uniform(bl_lat, tr_lat)
-            new_lon = random.uniform(bl_lon, tr_lon)
-
-            new_point = new(new_lat, new_lon, id=ipoint)
-
-            on_circle = check_if_on_circle(ipoint, new_point)
-
-        points[ipoint]['id'] = ipoint
-        points[ipoint]['lat'] = new_point['lat']
-        points[ipoint]['lon'] = new_point['lon']
-        points[ipoint]['elev'] = elev_func(new_lon, new_lat)
+    for i, point in enumerate(points):
+        point['id'] = i
 
     return points
 
 
 def generate_test_points():
-    vtx = ((0, 0), (1, 0), (2, 0), (0, 2), (2, 2), (-1, 3), (0, 4))
+    vtx = ((1,0),(9,0),(7,3),(13,2),(7,1),(10,8),(14,8),(12,13),(14,14),(4,15))
 
     points = np.zeros(len(vtx), dtype=POINT_DTYPE)
 

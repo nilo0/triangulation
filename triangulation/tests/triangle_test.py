@@ -1,7 +1,7 @@
 from ..main import Triangulation
 
 
-def test_find_neighbour_sharing_edge():
+def xtest_find_neighbour_sharing_edge():
 
     t = Triangulation(7, testing=True)
 

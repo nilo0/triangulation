@@ -147,20 +147,9 @@ class Triangle:
             else:
                 edge.append(self.P[eid])
 
-        if all(edge_ids) >= 0 and point['id'] >= 0 and point_nb['id'] >= 0:
-            if edge_ids[0] == -2:
-                e1 = self.P_2
-            elif edge_ids[0] == -1:
-                e1 = self.P_1
-            else:
-                e1 = self.P[edge_ids[0]]
-
-            if edge_ids[1] == -2:
-                e2 = self.P_2
-            elif edge_ids[1] == -1:
-                e2 = self.P_1
-            else:
-                e2 = self.P[edge_ids[1]]
+        if edge_ids[0] >= 0 and edge_ids[1] >= 0 and point['id'] >= 0 and point_nb['id'] >= 0:
+            e1 = self.P[edge_ids[0]]
+            e2 = self.P[edge_ids[1]]
 
             in_circle = points_helper.det_circle(
                 point, e1, e2, point_nb)
